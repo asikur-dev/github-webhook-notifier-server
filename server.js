@@ -7,7 +7,7 @@ app.use(express.json());
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
 app.get("/",(req,res)=>{
-  res.status(200).json({msg:"Running"})
+  res.status(200).json({msg:"Discord notifier UP & Running"})
 }
 
 app.post('/github-webhook', async (req, res) => {
