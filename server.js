@@ -1,25 +1,28 @@
 require('dotenv').config();
 const express = require('express');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 const app = express();
 app.use(express.json());
 
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 
-app.get("/",(req,res)=>{
-  res.status(200).json({msg:"Discord notifier UP & Running"})
-})
+app.get("/", (req, res) => {
+  res.status(200).json({ msg: "Discord notifier UP & Running" });
+});
 
 app.post('/github-webhook', async (req, res) => {
   const payload = req.body;
-  const username = payload.sender.login; // GitHub username
-  const repo = payload.repository.full_name;
-  const commitMessage = payload.commits[0]?.message || 'No commit message';
-  const commitUrl = payload.commits[0]?.url || '';
+  const username = payload?.sender?.login || "Someone"; // Fallback if sender or login is missing
+  const repo = payload?.repository?.full_name || "Unknown Repository"; // Fallback if repository is missing
+  const commitMessage = payload?.commits?.[0]?.message || "No commit message"; // Fallback if commits or message is missing
+  const commitUrl = payload?.commits?.[0]?.url || "No commit URL"; // Fallback if commits or URL is missing
+
+  // Get optional query parameter 'message' or 'data', default to "Asikur (default user)"
+  const customMessage = req.query.message || req.query.data || "Asikur (default user)";
 
   const discordPayload = {
     username: 'GitHub Bot',
-    content: `${username} pushed to ${repo}: ${commitMessage} (${commitUrl})`,
+    content: `${username} pushed to ${repo}: ${commitMessage} (${commitUrl}) - Custom note: ${customMessage}`,
   };
 
   try {
