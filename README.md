@@ -1,97 +1,142 @@
-Automating GitHub Push Notifications to Discord
-Overview
-This project creates an automated system to send GitHub push event notifications to a Discord channel using a webhook. Built with Node.js, it processes GitHub webhook payloads and delivers customizable messages, keeping your team updated on code changes in real-time.
-How to Set It Up
-Prerequisites
+# GitHub to Discord Push Notification
 
-Node.js (version >=18.0.0)
-A Discord server with a webhook URL
-Access to a GitHub repository
+An automated system to send GitHub **push event** notifications to a Discord channel using webhooks. Built with **Node.js**, this project listens to GitHub webhook payloads and sends customizable messages to keep your team updated in real-time.
 
-Installation
+---
 
-Clone the Repository
+## 🚀 Features
+
+* **Real-time notifications** for GitHub push events
+* **Customizable messages** via query parameters
+* **Robust fallbacks** for missing payload data
+* **Easy to deploy** on platforms like Render
+* **Support for multiple GitHub events** with extensibility
+
+---
+
+## 🔧 Prerequisites
+
+* Node.js (>= 18.0.0)
+* A Discord server with a webhook URL
+* Access to a GitHub repository
+
+---
+
+## 📦 Installation
+
+```bash
 git clone <repository-url>
 cd <repository-folder>
-
-
-Install Dependencies
 npm install
+```
 
+---
 
-Configure Environment
+## ⚙️ Configuration
 
-Create a .env file in the project root:DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your-webhook-id/your-webhook-token
+Create a `.env` file in the root:
 
+```env
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your-webhook-id/your-webhook-token
+```
 
-Do not commit the .env file; add it to .gitignore.
+> ⚠️ Do **NOT** commit `.env` — add it to `.gitignore`
 
+---
 
-Start the Server Locally
+## 🖥️ Running the Server Locally
+
+```bash
 npm start
+```
 
+### 🟢 Render Deployment
 
-For Render deployment, update index.js to use process.env.PORT || 9000 and deploy the code, configuring DISCORD_WEBHOOK_URL in Render's environment settings.
+* Ensure your server listens to `process.env.PORT || 9000`
+* Set `DISCORD_WEBHOOK_URL` in Render’s environment settings
+* Deploy the project to Render
 
+---
 
-Set Up GitHub Webhook
+## 🔗 GitHub Webhook Setup
 
-Go to your GitHub repository > "Settings" > "Webhooks" > "Add webhook."
-Payload URL: Use your server’s endpoint (e.g., https://your-server.onrender.com/github-webhook).
-Content Type: application/json.
-Trigger Events: Select "Let me select individual events" and check "Pushes" (customize events as needed; see below).
-Save the webhook.
+1. Go to your GitHub repository → **Settings** → **Webhooks** → **Add webhook**
+2. **Payload URL**: `https://your-server.onrender.com/github-webhook`
+3. **Content Type**: `application/json`
+4. **Events to Trigger**: Select `Let me select individual events` and check `Pushes`
+5. **Save** the webhook
 
+---
 
+## ⚙️ How It Works
 
-How It Works
+### Server Operation
 
-Server Operation: The server.js script runs an Express server listening on /github-webhook. It extracts optional fields (username, repository name, commit message, commit URL) with fallbacks (e.g., "Someone", "Unknown Repository") and supports custom notes via ?message= or ?data= (defaults to "Asikur (default user)").
-Discord Notification: Sends a formatted message to the DISCORD_WEBHOOK_URL, e.g., Someone pushed to Unknown Repository: No commit message (No commit URL) - Custom note: Asikur (default user).
-Deployment: Host on Render or a similar platform, ensuring port compatibility.
+* The server runs on `/github-webhook`
+* Extracts commit data: username, repository name, commit message, URL
+* Supports optional query string: `?message=` or `?data=` (default: `Asikur (default user)`)
 
-Benefits
+### Discord Notification
 
-Real-Time Updates: Receive instant notifications on code pushes, eliminating manual checks.
-Task Efficiency: Automates status updates, freeing developers to focus on coding rather than communication.
-Customization: Add context with query parameters, tailoring messages to your needs.
-Reliability: Handles incomplete payloads with defaults, ensuring consistent notifications.
-Team Alignment: Keeps remote teams synchronized on project progress.
-Scalability: Extend to multiple repositories or channels with additional webhooks.
+* Sends message to `DISCORD_WEBHOOK_URL`
+* Format:
 
-How It Makes Tasks Easier
+  ```
+  Someone pushed to Unknown Repository: No commit message (No commit URL) - Custom note: Asikur (default user)
+  ```
 
-Reduced Manual Effort: No need to manually announce pushes in Discord; the system handles it automatically.
-Faster Feedback: Team members see changes immediately, speeding up reviews and collaboration.
-Simplified Monitoring: Centralizes push notifications in Discord, reducing the need to check GitHub repeatedly.
-Custom Alerts: Quick adjustments via query parameters allow targeted communication without code changes.
+### Extending Support
 
-Customizing Events on GitHub
+* Add event handlers in `index.js` for other GitHub events (e.g., pull requests, issues, releases)
+* Use `payload.action` or `payload` structure to customize the message
 
-Event Selection: In the GitHub webhook settings, choose "Let me select individual events" to trigger notifications for specific actions:
-Pushes: Default setting for commit pushes (already implemented).
-Pull Requests: Enable to notify on PR creation, updates, or merges.
-Issues: Track issue creation or comments.
-Releases: Notify on new releases.
-Add multiple events as needed for comprehensive monitoring.
+---
 
+## 🎯 Benefits
 
-Payload Filtering: The script currently processes push events. To handle other events, extend index.js to parse different payload structures (e.g., payload.action for pull requests) and adjust the Discord message accordingly.
-Multiple Webhooks: Create separate webhooks for different events or channels, each pointing to a unique server endpoint if required.
+* 📡 **Instant Updates**: Avoid manual status updates
+* ⚙️ **Efficient Workflow**: Streamlined team communication
+* ✏️ **Custom Notes**: Add context with `?message=` or `?data=`
+* 🔄 **Reliable Defaults**: Handles missing GitHub fields
+* 📢 **Scalable Integration**: Supports multiple channels or repositories
 
-Usage
+---
 
-Push code to your GitHub repository to trigger the webhook.
-Customize messages with ?message=Hello or ?data=Test in the webhook URL.
-View notifications in your Discord channel.
+## 📈 Use Cases
 
-Troubleshooting
+* 🚀 Push to GitHub → Auto notify on Discord
+* 🔧 Pass custom notes with push using query parameters
+* 🧑‍💻 Collaborate better with real-time updates
 
-404 Error: Verify the server is running and the webhook URL is correct. Check Render logs.
-500 Error: Ensure DISCORD_WEBHOOK_URL is valid and accessible.
-No Messages: Confirm the GitHub webhook is active and the event type matches the trigger.
+---
 
-Contributing
-Submit issues or pull requests to improve this project!
-License
-This project is licensed under the ISC License.
+## 🧪 Troubleshooting
+
+* **404 Error**: Ensure server is running and endpoint URL is correct
+* **500 Error**: Check `DISCORD_WEBHOOK_URL` validity
+* **No Notification**: Confirm GitHub webhook is active and push event is selected
+
+---
+
+## 🧩 Customizing Events
+
+Go to **Webhook Settings → Let me select individual events**:
+
+* ✅ Pushes *(default implemented)*
+* 🔃 Pull Requests
+* 🐞 Issues
+* 🚀 Releases
+
+Update `index.js` to parse and send messages for those events accordingly.
+
+---
+
+## 🤝 Contributing
+
+Pull requests and issue reports are welcome!
+
+---
+
+## 📜 License
+
+This project is licensed under the **ISC License**.
