@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
@@ -17,13 +18,17 @@ app.post('/github-webhook', async (req, res) => {
     content: `${username} pushed to ${repo}: ${commitMessage} (${commitUrl})`,
   };
 
-  await fetch(DISCORD_WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(discordPayload),
-  });
-
-  res.status(200).send('Webhook received');
+  try {
+    await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(discordPayload),
+    });
+    res.status(200).send('Webhook received');
+  } catch (error) {
+    console.error('Error sending to Discord:', error);
+    res.status(500).send('Error processing webhook');
+  }
 });
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.listen(9000, () => console.log('Server running on port 9000'));
