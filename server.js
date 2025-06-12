@@ -17,7 +17,7 @@ app.post('/github-webhook', async (req, res) => {
   const commitMessage = payload?.commits?.[0]?.message || "No commit message"; // Fallback if commits or message is missing
   const commitUrl = payload?.commits?.[0]?.url || "No commit URL"; // Fallback if commits or URL is missing
 
-  // Get optional query parameter 'message' or 'data', default to "Asikur (default user)"
+  // Get optional query sparameter 'message' or 'data', default to "Asikur (default user)"
   const customMessage = req.query.message || req.query.data || "Asikur (default user)";
 
   const discordPayload = {
